@@ -1,0 +1,57 @@
+version: '3.8'
+services:
+  nginx:
+    build:
+      context: ./docker/nginx
+    depends_on:
+      - php
+    ports:
+      - "80:80"
+    volumes:
+      - ./:/src
+
+  php:
+    build:
+      context: ./docker/php
+    depends_on:
+      - mysql
+      - mysql-test
+    ports:
+      - 5173:5173 # Vite
+    volumes:
+      - ./:/src
+      # - /src/node_modules
+      # - /src/vendor
+      - ./docker/php/php.ini:/usr/local/etc/php/php.ini
+
+  mysql: &mysql
+    image: mysql:8.0.37
+    command: --max_allowed_packet=32505856
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: docker
+      MYSQL_PASSWORD: docker
+    ports:
+      - "3306:3306"
+
+  mysql-test:
+    <<: *mysql
+    volumes:
+      - mysql_test_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+
+  redis:
+    image: redis:7.0.12
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+
+volumes:
+  mysql_data:
+  mysql_test_data:
+  redis_data:
