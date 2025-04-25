@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Middleware\HogeMiddleware;
+use App\Http\Middleware\LogUserNameMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -27,7 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // apiという既存のmiddlewareグループにmiddlewareを追加
         $middleware->api(append: [
-            HogeMiddleware::class,
+            LogUserNameMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

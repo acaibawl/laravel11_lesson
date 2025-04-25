@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
-class HogeMiddleware
+class LogUserNameMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
