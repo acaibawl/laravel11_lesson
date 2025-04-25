@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\HogeMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -13,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // webの未認証リダイレクト処理
         $middleware->redirectGuestsTo(function (Request $request) {
             // もし `admin.*` という名前付きルート配下なら管理画面用のログインへ
             if (request()->routeIs('admin.*')) {
@@ -22,6 +24,11 @@ return Application::configure(basePath: dirname(__DIR__))
             // それ以外は通常ユーザー用のログインへ
             return $request->expectsJson() ? null : route('auth');
         });
+
+        // apiという既存のmiddlewareグループにmiddlewareを追加
+        $middleware->api(append: [
+            HogeMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

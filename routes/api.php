@@ -21,6 +21,7 @@ Route::group([
     'prefix' => 'auth',
 ], function () {
     Route::post('login', [ApiUserAuthController::class, 'login']);
+    // middlewareのauthは、'auth:{guards名}'で指定できる
     Route::post('logout', [ApiUserAuthController::class, 'logout'])->middleware('auth:api_user');
     Route::post('refresh', [ApiUserAuthController::class, 'refresh'])->middleware('auth:api_user');;
     Route::post('me', [ApiUserAuthController::class, 'me'])->middleware('auth:api_user');;
