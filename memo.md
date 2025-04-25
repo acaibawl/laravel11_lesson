@@ -39,11 +39,13 @@ https://qiita.com/hitotch/items/2e816bc1423d00562dc2
 
 Laravelのmiddlewareのapiを指定すると何が起きている？
 
+* auth()->factory()->getTTL() * 60 でfactory()のところでエラーになる
+  * 参考にしているのはlaravel10の手順で、laravel11だとできなくなってる？
+    * ログインユーザに情報を見せるだけの箇所だから、設定ファイルからTTLの情報を表示するように対応
 * 未認証で認証が必要なページにアクセス時、Route [auth] not defined.という500エラーになった
   * 未認証時のアクセスをauthという名前付きルートにリダイレクトしようとしている
   * そもそもapiリクエストなのでリダイレクトは不要
     * リクエスト側のヘッダーに Accept: application/json ヘッダーを付けてやれば、Unauthenticatedという内容のjsonが返却される
-
 * Contollerでmiddlewareを設定する方法でexcept及びonlyにして、メソッド単位でmiddlewareの適用を調整しようとしたけどなぜか効かず、すべてのメソッドにmiddlewareが適用されてしまったのでapi.webファイルでルートに対して個別にmiddlewareを適用した
 
 
