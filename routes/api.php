@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApiUserAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -13,3 +14,15 @@ Route::get('/hello', function () {
 
 Route::post('/tasks', [\App\Http\Controllers\TaskController::class, 'store']);
 Route::get('/tasks/{id}', [\App\Http\Controllers\TaskController::class, 'show'])->where('id', '[0-9]+');
+
+// prefixにauthを指定すると、中で指定したuriはすべて/auth/xxxになる
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'auth',
+], function () {
+    Route::post('login', [ApiUserAuthController::class, 'login']);
+    Route::post('logout', [ApiUserAuthController::class, 'logout'])->middleware('auth:api_user');
+    Route::post('refresh', [ApiUserAuthController::class, 'refresh'])->middleware('auth:api_user');;
+    Route::post('me', [ApiUserAuthController::class, 'me'])->middleware('auth:api_user');;
+});
+Route::post('/register', [ApiUserAuthController::class, 'register']);
