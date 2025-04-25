@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+//use App\Facades\EatLog;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -28,6 +29,7 @@ class ApiUserAuthController extends Controller // implements HasMiddleware
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
+        \EatLog::eat('りんご');
         return $this->respondWithToken($token);
     }
 
