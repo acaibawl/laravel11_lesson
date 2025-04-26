@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ApiUserAuthController;
+use App\Http\Controllers\PostRelationTestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,3 +28,5 @@ Route::group([
     Route::post('me', [ApiUserAuthController::class, 'me'])->middleware('auth:api_user');;
 });
 Route::post('/register', [ApiUserAuthController::class, 'register']);
+
+Route::get('/postRelationTest', [PostRelationTestController::class, 'index']);
