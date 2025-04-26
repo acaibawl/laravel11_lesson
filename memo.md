@@ -49,3 +49,16 @@ Laravelのmiddlewareのapiを指定すると何が起きている？
 * Contollerでmiddlewareを設定する方法でexcept及びonlyにして、メソッド単位でmiddlewareの適用を調整しようとしたけどなぜか効かず、すべてのメソッドにmiddlewareが適用されてしまったのでapi.webファイルでルートに対して個別にmiddlewareを適用した
 
 
+# DB操作・Eloquent
+
+```
+// クエリログを有効化して問題を検出
+\DB::enableQueryLog();
+// コードの実行
+\DB::getQueryLog(); // 発行されたクエリを確認
+```
+
+* プロパティアクセスでリレーション先のデータを取得
+  * $user->posts->first()
+* リレーションメソッドでリレーション先のテーブルに対して操作
+  * $user->posts()->createMany([]);
