@@ -7,7 +7,6 @@ namespace App\Http\Middleware;
 use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class LogUserNameMiddleware
@@ -17,7 +16,7 @@ class LogUserNameMiddleware
         /** @var User $user */
         $user = auth()->user();
         if ($user) {
-            Log::info("user.name: {$user->name}");
+            \Log::info("user.name: {$user->name}");
         }
 
         return $next($request);
