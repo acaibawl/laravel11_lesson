@@ -62,3 +62,53 @@ Laravelのmiddlewareのapiを指定すると何が起きている？
   * $user->posts->first()
 * リレーションメソッドでリレーション先のテーブルに対して操作
   * $user->posts()->createMany([]);
+
+
+# メール送信
+
+* Amazon WorkMail
+  * リージョンはオレゴン
+  * Organization作成
+    * Email Domain
+      * Existing Route 53 domain を選択
+    * Route 53 hosted zone は任意のRoute53に登録してあるdomainを選択
+    * AliasはwebメーラのURLに含まれる文字列。domainの前半などで良さそう
+  * メールのドメイン設定
+    * 左メニューからOrganizations選択、Domains選択、追加したdomainを選択。Improved security detailsで2項目（spfとDMARCに関するレコード）がMissingになっていることを確認
+      * Route53の該当ホストゾーンの設定を開いて、TXTレコードを追加する
+        * WorkMailの画面をリロードして、MissingだったのがVerifiedになっていればOK
+    * 
+  * メールユーザ追加
+    * Organizationを選択した状態で左メニューのUsersを選択し、Add Userを押す
+    * User detailで、Username, Display name, Email address(domain含む)を入力し、passwordを設定
+  * メール送受信テスト
+    * WorkMail標準のwebメーラーで確認
+      * https://acai-blog.awsapps.com/mail
+    * Thunderbirdをインストールして確認
+      * IMAPの設定値（公式）
+        * https://docs.aws.amazon.com/ja_jp/workmail/latest/userguide/using_IMAP.html
+      * 受信サーバー
+        * imap.mail.us-west-2.awsapps.com（オレゴンのホスト名）
+        * ポート番号993
+      * 送信サーバー
+        * smtp.mail.us-west-2.awsapps.com（オレゴンのホスト名）
+        * ポート番号465
+      * ユーザー名はメールアドレスを設定
+
+* SES
+  * 左メニュー「設定を始める」から、メールアドレスを検証、送信ドメインを検証、テストEメールの送信、本番アクセスをリクエストの順に試す
+  * AWSのサポートから、sesをどのような用途で使うのか確認したい旨のメッセージが来るので、aws上のメッセージサポート画面で返信する
+    * 「主にアプリケーション開発の学習用として、アプリケーションからの通知用に使うことを想定しています。 送信数はそれほど多くならないかと思います。」という内容でひとまず解除してもらえました。
+  * composer require aws/aws-sdk-php でaws操作用のsdkをインストール
+  * config/services.phpのsesのkeyを他のawsサービスと被らない様に修正
+  * .envファイルに設定追加・修正
+    * MAIL_FROM_ADDRESSを修正
+      * 追加
+        * AWS_SES_ACCESS_KEY_ID=xxxxxxxxxxxxxxxxxxxxxxxxxx
+        * AWS_SES_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxx
+        * AWS_SES_DEFAULT_REGION=us-west-2（オレゴン）
+    * MAIL_MAILER=ses に変更
+    * MAIL_FROM_ADDRESSのdomainより前の部分は、sesなら存在しない「noreply」等でもメール送信できる
+  * tinkerでメール送信
+    *  Mail::raw('test from laravel & ses', function($message) { $message->to('宛先アドレス')->subject('test'); });
+      
