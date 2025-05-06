@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ApiUserAuthController;
+use App\Http\Controllers\MailTestController;
 use App\Http\Controllers\PostRelationTestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -30,3 +31,4 @@ Route::group([
 Route::post('/register', [ApiUserAuthController::class, 'register']);
 
 Route::get('/postRelationTest', [PostRelationTestController::class, 'index']);
+Route::get('/mailTest', [MailTestController::class, 'send']);
