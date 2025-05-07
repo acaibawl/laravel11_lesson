@@ -23,4 +23,25 @@ class PostManageControllerTest extends TestCase
             ->assertSee('私のブログ本文')
             ->assertDontSee('他人様のブログ本文');
     }
+
+    public function test_can_create_my_new_post()
+    {
+        $me = $this->login();
+
+        $validData = [
+            'body' => '私のブログ本文',
+            'status' => '1',
+        ];
+
+        $response = $this->post(route('posts.store'), $validData);
+        $post = Post::first();
+        $response->assertRedirectToRoute('posts.edit', ['post' => $post])
+            ->assertSessionHas('status', 'ブログを投稿しました');
+        // リダイレクト後
+
+        $this->assertDatabaseHas('posts',
+            [...$validData, 'user_id' => $me->id]
+        );
+
+    }
 }

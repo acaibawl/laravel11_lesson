@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class PostManageController extends Controller
@@ -11,5 +13,17 @@ class PostManageController extends Controller
     {
         $posts = auth()->user()->posts;
         return view('members.posts.index', compact('posts'));
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'body' => ['required', 'string', 'max:255'],
+            'status' => ['required', 'integer', 'in:0,1'],
+        ]);
+
+        $post = auth()->user()->posts()->create($data);
+        return to_route('posts.edit', ['post' => $post])
+            ->with('status', 'ブログを投稿しました');
     }
 }

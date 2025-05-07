@@ -38,9 +38,7 @@ class Post extends Model
     const OPEN = 1;
     const CLOSE = 0;
 
-    protected $fillable = [
-        'body'
-    ];
+    protected $guarded = [];
 
     public function scopeOnlyOpen(Builder $query): Builder
     {
