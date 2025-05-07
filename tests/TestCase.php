@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\Models\User;
 use Illuminate\Foundation\Console\CliDumper;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -62,5 +63,18 @@ abstract class TestCase extends BaseTestCase
         $this->beforeApplicationDestroyed(function () {
             dump(\DB::getQueryLog());
         });
+    }
+
+    /**
+     * 共通のログイン処理
+     * @param User|null $user
+     * @return User
+     */
+    protected function login(User $user = null): User
+    {
+        $user ??= User::factory()->create();
+        $this->actingAs($user);
+        // $this->actingAs($user, 'admin');  マルチ認証の場合
+        return $user;
     }
 }

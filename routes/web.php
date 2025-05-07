@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminLoginController;
+use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -25,5 +26,14 @@ Route::middleware('auth:admin')->group(function () {
     })->name('admin.top');
 });
 
+
+// ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ testの練習用ルート ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/posts', [PostController::class, 'index']);
+Route::get('/login', function () {
+    return 'ログイン画面';
+})->name('auth');
+Route::middleware('auth')->group(function () {
+    // 認証が必要なページ
+    Route::get('/members', [MemberController::class, 'index']);
+});
