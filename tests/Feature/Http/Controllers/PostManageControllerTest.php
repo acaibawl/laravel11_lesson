@@ -66,4 +66,41 @@ class PostManageControllerTest extends TestCase
         $this->get(route('posts.edit', ['post' => $post]))
             ->assertForbidden();
     }
+
+    /*
+     * 自分のブログ投稿の更新ができる
+     */
+    public function test_can_update_own_post()
+    {
+        $validData = [
+            'body' => '新本文',
+            'status' => '1',
+        ];
+        $post = Post::factory()->create();
+        $this->login($post->user);
+
+        $this->put(route('posts.update', ['post' => $post]), $validData)
+            ->assertRedirectToRoute('posts.edit', ['post' => $post])
+            ->assertSessionHas('status', 'ブログを更新しました');
+        $this->assertDatabaseHas('posts', $validData);
+        $this->assertDatabaseCount('posts', 1);
+    }
+
+    /*
+     * 他人様のブログ投稿は更新できない
+     */
+    public function test_cant_update_others_post()
+    {
+        $validData = [
+            'body' => '新本文',
+            'status' => '1',
+        ];
+        $post = Post::factory()->create(['body' => '元の本文']);
+        $this->login();
+
+        $this->put(route('posts.update', ['post' => $post]), $validData)
+            ->assertForbidden();
+        $post->refresh();
+        $this->assertSame('元の本文', $post->body);
+    }
 }

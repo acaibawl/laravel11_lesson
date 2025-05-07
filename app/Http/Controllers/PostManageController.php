@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -27,7 +28,7 @@ class PostManageController extends Controller
             ->with('status', 'ブログを投稿しました');
     }
 
-    public function edit(Post $post)
+    public function edit(Post $post): View
     {
         if (auth()->user()->isNot($post->user)) {
             abort(403);
@@ -36,5 +37,23 @@ class PostManageController extends Controller
         $data = old() ?: $post;
 
         return view('members.posts.edit', compact('post', 'data'));
+    }
+
+    public function update(Request $request, Post $post)
+    {
+        if (auth()->user()->isNot($post->user)) {
+            abort(403);
+        }
+
+        $data = $request->validate([
+            'body' => ['required', 'string', 'max:255'],
+            'status' => ['required', 'integer', 'in:0,1'],
+        ]);
+
+        $post->update($data);
+
+
+        return to_route('posts.edit', ['post' => $post])
+            ->with('status', 'ブログを更新しました');
     }
 }
