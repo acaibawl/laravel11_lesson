@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AdminLoginController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -22,3 +24,6 @@ Route::middleware('auth:admin')->group(function () {
         return view('admin.top');
     })->name('admin.top');
 });
+
+Route::get('/users', [UserController::class, 'index']);
+Route::get('/posts', [PostController::class, 'index']);
