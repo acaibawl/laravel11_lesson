@@ -26,4 +26,15 @@ class PostManageController extends Controller
         return to_route('posts.edit', ['post' => $post])
             ->with('status', 'ブログを投稿しました');
     }
+
+    public function edit(Post $post)
+    {
+        if (auth()->user()->isNot($post->user)) {
+            abort(403);
+        }
+
+        $data = old() ?: $post;
+
+        return view('members.posts.edit', compact('post', 'data'));
+    }
 }

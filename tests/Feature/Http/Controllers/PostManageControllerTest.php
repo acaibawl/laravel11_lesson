@@ -42,6 +42,28 @@ class PostManageControllerTest extends TestCase
         $this->assertDatabaseHas('posts',
             [...$validData, 'user_id' => $me->id]
         );
+    }
 
+    /*
+     * 自分のブログ投稿の編集画面（URL）は、開く事ができる
+     */
+    public function test_can_open_own_post_edit_page()
+    {
+        $post = Post::factory()->create();
+        $this->login($post->user);
+        $this->get(route('posts.edit', ['post' => $post]))
+            ->assertOk();
+    }
+
+    /*
+     * 他人様のブログ投稿の編集画面（URL）は、開く事ができない
+     */
+    public function test_cant_open_others_post_edit_page()
+    {
+        $post = Post::factory()->create();
+        $this->login();
+
+        $this->get(route('posts.edit', ['post' => $post]))
+            ->assertForbidden();
     }
 }
