@@ -63,3 +63,7 @@ Route::get('/get-random-string', function (StrRandom $random) {
     $secret = $random->get(10);
     return $secret;
 });
+Route::get('/enter', function () {
+    $uuid = Str::uuid();
+    return redirect("/result/{$uuid}");
+});
