@@ -5,6 +5,7 @@ namespace Tests\Feature\Http\Controllers;
 use App\Models\Post;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use PHPUnit\Framework\Attributes\TestWith;
 use Tests\TestCase;
 
 class PostManageControllerTest extends TestCase
@@ -70,12 +71,13 @@ class PostManageControllerTest extends TestCase
     /*
      * 自分のブログ投稿の更新ができる
      */
-    public function test_can_update_own_post()
+    #[TestWith([0])]
+    #[TestWith([1])]
+    public function test_can_update_own_post(int $status)
     {
-        $validData = [
-            'body' => '新本文',
-            'status' => '1',
-        ];
+        $validData = $this->validData([
+            'status' => $status
+        ]);
         $post = Post::factory()->create();
         $this->login($post->user);
 
@@ -130,6 +132,14 @@ class PostManageControllerTest extends TestCase
             ->assertForbidden();
 
         $this->assertDatabaseHas('posts', ['id' => $post->id]);
+    }
 
+    private function validData(array $overrides = []): array
+    {
+        return [
+            'body' => '新本文',
+            'status' => 1,
+            ...$overrides,
+        ];
     }
 }
