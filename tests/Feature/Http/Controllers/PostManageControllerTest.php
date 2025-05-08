@@ -142,4 +142,22 @@ class PostManageControllerTest extends TestCase
             ...$overrides,
         ];
     }
+
+    /**
+     * 投稿一覧、本文でヒット
+     */
+    public function test_list_of_posts_hits_in_body()
+    {
+        $me = $this->login();
+        Post::factory()->for($me)->createMany([
+            ['body' => '信長の本文'],
+            ['body' => '家康の本文'],
+        ]);
+
+        $response = $this->get('members/posts?keyword=信長の本');
+
+        $response->assertOk()
+            ->assertSee('信長の本文')
+            ->assertDontSee('家康の本文');
+    }
 }

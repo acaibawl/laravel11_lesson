@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Contracts\View\View;
-use Illuminate\Foundation\Application;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -12,7 +12,24 @@ class PostManageController extends Controller
 {
     public function index(): View
     {
-        $posts = auth()->user()->posts;
+        $validator = \Validator::make(request()->all(), [
+            'keyword' => ['nullable', 'string', 'max:100'],
+        ]);
+
+        abort_if($validator->fails(), 422);
+        $data = $validator->validated();
+        $query = Post::query()
+            ->where('user_id', auth()->user()->id);
+
+        // キーワード検索
+        if ($val = data_get($data, 'keyword')) {
+            $query->where(function (Builder $query) use ($val) {
+                $query->where('body', 'LIKE', "%{$val}%");
+            });
+        }
+
+
+        $posts = $query->get();
         return view('members.posts.index', compact('posts'));
     }
 
