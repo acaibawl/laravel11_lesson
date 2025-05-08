@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminLoginController;
 use App\Http\Controllers\AvatarController;
+use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\PostManageController;
@@ -51,3 +52,4 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/avatar', [AvatarController::class, 'index']);
 Route::post('/avatar', [AvatarController::class, 'store']);
+Route::get('/download', [DownloadController::class, 'index']);
