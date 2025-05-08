@@ -5,6 +5,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\PostManageController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\IpLimit;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -42,5 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::post('members/posts', [PostManageController::class, 'store'])->name('posts.store');
     Route::get('members/posts/{post}/edit', [PostManageController::class, 'edit'])->name('posts.edit');
     Route::put('members/posts/{post}', [PostManageController::class, 'update'])->name('posts.update');
-    Route::delete('members/posts/{post}', [PostManageController::class, 'destroy'])->name('posts.destroy');
+    Route::delete('members/posts/{post}', [PostManageController::class, 'destroy'])
+        ->name('posts.destroy')
+        ->middleware(IpLimit::class);
 });

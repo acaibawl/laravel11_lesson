@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Http\Controllers;
 
+use App\Http\Middleware\IpLimit;
 use App\Models\Post;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -111,6 +112,9 @@ class PostManageControllerTest extends TestCase
      */
     public function test_can_delete_own_post()
     {
+        // 特定のミドルウェアを外す
+        // $this->withoutMiddleware(IpLimit::class);
+
         $post = Post::factory()->create();
         $this->login($post->user);
 
