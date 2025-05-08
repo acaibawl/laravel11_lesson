@@ -8,6 +8,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\PostManageController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\IpLimit;
+use App\Services\StrRandom;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -53,3 +54,8 @@ Route::middleware('auth')->group(function () {
 Route::get('/avatar', [AvatarController::class, 'index']);
 Route::post('/avatar', [AvatarController::class, 'store']);
 Route::get('/download', [DownloadController::class, 'index']);
+Route::get('/throw-exception', function () {
+    $random = New StrRandom();
+    $random->get(101);
+    return 'welcome';
+});
