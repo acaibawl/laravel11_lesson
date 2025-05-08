@@ -59,3 +59,7 @@ Route::get('/throw-exception', function () {
     $random->get(101);
     return 'welcome';
 });
+Route::get('/get-random-string', function (StrRandom $random) {
+    $secret = $random->get(10);
+    return $secret;
+});
