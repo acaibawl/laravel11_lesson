@@ -164,4 +164,25 @@ class PostManageControllerTest extends TestCase
             ->assertSee('信長の本文')
             ->assertDontSee('家康の本文');
     }
+
+    public function test_create_post_validation()
+    {
+        $url = route('posts.store');
+        $this->login();
+
+        // 何も入力しないで送信した際は、リダイレクトされるのを確認
+        $this->post($url, [])->assertRedirect('/');
+
+        // bodyの入力チェック
+        $this->post($url, ['body' => ''])->assertInvalid(['body' => 'The body field is required.']);
+        $this->post($url, ['body' => ['aa' => 'bb']])->assertInvalid('body');
+        $this->post($url, ['body' => str_repeat('a', 256)])->assertInvalid('body');
+
+        // statusの入力チェック
+        $this->post($url, ['status' => ''])->assertInvalid('status');
+        $this->post($url, ['status' => 'aa'])->assertInvalid('status');
+        $this->post($url, ['status' => 2])->assertInvalid('status');
+
+        // postのresponseでdumpSession()を呼ぶとエラーの内容が見られる
+    }
 }
