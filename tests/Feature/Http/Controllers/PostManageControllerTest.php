@@ -103,4 +103,33 @@ class PostManageControllerTest extends TestCase
         $post->refresh();
         $this->assertSame('元の本文', $post->body);
     }
+
+    /*
+     * 自分のブログ投稿の削除ができる
+     */
+    public function test_can_delete_own_post()
+    {
+        $post = Post::factory()->create();
+        $this->login($post->user);
+
+        $this->delete(route('posts.destroy', ['post' => $post]))
+            ->assertRedirectToRoute('posts.index');
+
+        $this->assertDatabaseMissing('posts', ['id' => $post->id]);
+    }
+
+    /*
+     * 他人様のブログを削除はできない
+     */
+    public function test_cant_delete_others_post()
+    {
+        $post = Post::factory()->create();
+        $this->login();
+
+        $this->delete(route('posts.destroy', ['post' => $post]))
+            ->assertForbidden();
+
+        $this->assertDatabaseHas('posts', ['id' => $post->id]);
+
+    }
 }
