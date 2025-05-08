@@ -112,4 +112,47 @@ Laravelのmiddlewareのapiを指定すると何が起きている？
     * MAIL_FROM_ADDRESSのdomainより前の部分は、sesなら存在しない「noreply」等でもメール送信できる
   * tinkerでメール送信
     *  Mail::raw('test from laravel & ses', function($message) { $message->to('宛先アドレス')->subject('test'); });
-      
+
+# testコード
+
+### よく使うステータスコード
+
+assertOk() =>	200 OK（ページが問題無く表示された）
+assertRedirect() =>	301, 302 などのリダイレクト。
+assertForbidden() =>	403 Forbidden
+assertNotFound() =>	404 Not Found
+assertUnprocessable() =>	422 Unprocessable Entity（validationエラー）
+assertNoContent() =>	204 No Content
+
+### AssertableJson（FluentなAssert）
+
+要素の有無について厳しくチェックするのがデフォルトなので、AssertExactJsonに近いが、etc()を使うことで省略もできる柔軟性を持つ。
+jsonに対して配列（json）をぶつけてAssertするのではなく、Jsonの内容を検索するような形でAssertする。
+
+### テストDB準備の手順
+
+https://zenn.dev/nshiro/books/laravel-11-test/viewer/15_db-ready
+
+### faker
+
+書き方がバージョンで異なる
+
+```
+// 昔
+$faker->name
+$this->faker->name
+
+// 少し昔
+$this->faker->name()
+
+// 今
+fake()->name()
+```
+
+以前いた現場の方針だと、fakerは画面用のseederで使って、テストコードでは一意に定まるように使わないほうがよい。
+
+### 実行に時間がかかるテストを見つける
+
+```
+php artisan test --profile
+```

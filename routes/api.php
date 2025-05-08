@@ -32,3 +32,24 @@ Route::post('/register', [ApiUserAuthController::class, 'register']);
 
 Route::get('/postRelationTest', [PostRelationTestController::class, 'index']);
 Route::get('/mailTest', [MailTestController::class, 'send']);
+
+Route::get('/jsonTest', function () {
+    return [
+        'success' => true,
+        'username' => 'John',
+        'cat' => [1, 2, 3],
+    ];
+});
+
+Route::get('/fluentJsonTest', function () {
+    return [
+        'name' => 'Yamada',
+        'age' => 20,
+        'gender' => 'male',
+        'email' => 'hogebar@example.net',
+        'posts' => [
+            ['title' => 'title1', 'body' => 'body1'],
+            ['title' => 'title2', 'body' => 'body2'],
+        ],
+    ];
+});
