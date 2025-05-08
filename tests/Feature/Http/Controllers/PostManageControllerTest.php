@@ -3,9 +3,12 @@
 namespace Tests\Feature\Http\Controllers;
 
 use App\Http\Middleware\IpLimit;
+use App\Mail\BlogPosted;
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Mail;
 use PHPUnit\Framework\Attributes\TestWith;
 use Tests\TestCase;
 
@@ -28,7 +31,15 @@ class PostManageControllerTest extends TestCase
 
     public function test_can_create_my_new_post()
     {
-        $me = $this->login();
+        // 実際にはメールそうし処理をしないように設定
+        Mail::fake();
+
+        $me = User::factory()->create([
+            'name' => '織田信長',
+            'email' => 'oda@example.net',
+        ]);
+
+        $this->login($me);
 
         $validData = [
             'body' => '私のブログ本文',
@@ -40,6 +51,15 @@ class PostManageControllerTest extends TestCase
         $response->assertRedirectToRoute('posts.edit', ['post' => $post])
             ->assertSessionHas('status', 'ブログを投稿しました');
         // リダイレクト後
+
+        // コントローラでメール送信処理がされたことを確認
+        Mail::assertSent(BlogPosted::class);
+
+        $post = Post::first();
+
+        $mailable = new BlogPosted($me, $post);
+        $mailable->assertTo($me->email);
+        $mailable->assertSeeInText('本文： ' . $post->body);
 
         $this->assertDatabaseHas('posts',
             [...$validData, 'user_id' => $me->id]

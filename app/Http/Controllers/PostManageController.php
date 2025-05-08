@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\BlogPosted;
 use App\Models\Post;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class PostManageController extends Controller
 {
@@ -40,7 +42,11 @@ class PostManageController extends Controller
             'status' => ['required', 'integer', 'in:0,1'],
         ]);
 
-        $post = auth()->user()->posts()->create($data);
+        $user = auth()->user();
+        $post = $user->posts()->create($data);
+
+        Mail::send(new BlogPosted($user, $post));
+
         return to_route('posts.edit', ['post' => $post])
             ->with('status', 'ブログを投稿しました');
     }
