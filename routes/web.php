@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminLoginController;
+use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\PostManageController;
@@ -47,3 +48,6 @@ Route::middleware('auth')->group(function () {
         ->name('posts.destroy')
         ->middleware(IpLimit::class);
 });
+
+Route::get('/avatar', [AvatarController::class, 'index']);
+Route::post('/avatar', [AvatarController::class, 'store']);
